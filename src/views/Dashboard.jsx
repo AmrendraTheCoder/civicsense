@@ -10,6 +10,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import { useCivic } from '../context/CivicContext';
+import { DashboardSkeleton } from '../components/Skeletons';
 
 // ── Fix Leaflet default icon path (Vite asset issue) ─────────────────────────
 delete L.Icon.Default.prototype._getIconUrl;
@@ -586,9 +587,16 @@ function ComplaintRow({ complaint, delay = 0 }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard() {
   const { complaints, stats, setActiveView } = useCivic();
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter]     = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // ── Dynamic metrics ──────────────────────────────────────────────────────
+  // Simulate initial data-fetch skeleton (clears after 800ms)
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(t);
+  }, []);
+
+  // ── Dynamic metrics (always computed, even while skeleton shows) ─────────
   const metrics = useMemo(() => {
     const total     = complaints.length;
     const resolved  = complaints.filter(c => c.status === 'Resolved').length;
@@ -611,6 +619,8 @@ export default function Dashboard() {
     if (['High','Med','Low'].includes(filter)) return c.priority === filter;
     return c.status === filter;
   });
+
+  if (isLoading) return <DashboardSkeleton />;
 
   return (
     <div className="space-y-6">

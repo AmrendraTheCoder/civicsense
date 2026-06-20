@@ -12,29 +12,12 @@ import PredictiveAnalytics from './views/PredictiveAnalytics';
 function AmbientBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-      {/* Top-left orb */}
       <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full opacity-20 animate-float"
-        style={{
-          background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-        }}
-      />
-      {/* Top-right orb */}
+        style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.5) 0%, transparent 70%)', filter: 'blur(60px)' }} />
       <div className="absolute -top-20 right-0 w-80 h-80 rounded-full opacity-15 animate-float"
-        style={{
-          background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 70%)',
-          filter: 'blur(60px)',
-          animationDelay: '2s',
-        }}
-      />
-      {/* Bottom-center orb */}
+        style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 70%)', filter: 'blur(60px)', animationDelay: '2s' }} />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-72 rounded-full opacity-10 animate-float"
-        style={{
-          background: 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 70%)',
-          filter: 'blur(80px)',
-          animationDelay: '4s',
-        }}
-      />
+        style={{ background: 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 70%)', filter: 'blur(80px)', animationDelay: '4s' }} />
     </div>
   );
 }
@@ -42,14 +25,12 @@ function AmbientBackground() {
 // ── View Router ──────────────────────────────────────────────────────────────
 function ViewRouter() {
   const { activeView } = useCivic();
-
   const views = {
-    dashboard: <Dashboard />,
-    'file-complaint': <FileComplaint />,
-    'voice-assistant': <VoiceAssistant />,
+    'dashboard':            <Dashboard />,
+    'file-complaint':       <FileComplaint />,
+    'voice-assistant':      <VoiceAssistant />,
     'predictive-analytics': <PredictiveAnalytics />,
   };
-
   return (
     <div key={activeView} className="animate-fade-in-up">
       {views[activeView] || <Dashboard />}
@@ -65,26 +46,36 @@ function AppShell() {
     <div className="min-h-screen relative">
       <AmbientBackground />
 
-      {/* Navbar — fixed top */}
+      {/* Top navbar */}
       <Navbar />
 
-      {/* Sidebar — fixed left */}
+      {/* Sidebar (desktop) + Bottom nav (mobile) */}
       <Sidebar />
 
-      {/* Main content */}
+      {/* Main content area
+          Desktop: offset by sidebar width
+          Mobile:  no left margin, extra bottom padding for bottom nav */}
       <main
         id="main-content"
         className="relative z-10 pt-16 min-h-screen transition-all duration-300"
         style={{
-          marginLeft: sidebarOpen ? '256px' : '64px',
+          marginLeft: 0,
         }}
       >
-        <div className="p-5 lg:p-8 max-w-6xl mx-auto">
+        {/* Desktop margin via inline style, overridden on md+ */}
+        <style>{`
+          @media (min-width: 768px) {
+            #main-content { margin-left: ${sidebarOpen ? '256px' : '64px'}; }
+          }
+        `}</style>
+
+        {/* Content wrapper: extra bottom padding on mobile for bottom nav */}
+        <div className="p-4 md:p-5 lg:p-8 max-w-6xl mx-auto pb-24 md:pb-8">
           <ViewRouter />
         </div>
       </main>
 
-      {/* Toast notifications */}
+      {/* Toast stack */}
       <NotificationToasts />
     </div>
   );

@@ -633,21 +633,25 @@ export default function FileComplaint() {
             type="button"
             onClick={handleSubmit}
             disabled={phase === 'processing'}
-            className="btn-primary w-full py-3.5 flex items-center justify-center gap-2.5 text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+            className={`btn-primary w-full py-3.5 flex items-center justify-center gap-2.5 text-sm font-semibold transition-all ${
+              phase === 'processing' ? 'btn-thinking' : ''
+            }`}
           >
             {phase === 'processing' ? (
               <>
-                <ZapIcon size={16} className="animate-pulse" />
-                AI Processing…
+                <span className="spinner text-white" style={{ width: 16, height: 16 }} />
+                <span>Claude is analyzing…</span>
+                <ZapIcon size={14} className="animate-pulse text-violet-300" />
               </>
             ) : (
               <>
                 <SparklesIcon size={16} />
-                Submit &amp; Analyze with AI
-                <SendIcon size={15} />
+                Submit & Analyze with AI
+                <SendIcon size={14} />
               </>
             )}
           </button>
+
         </div>
 
         {/* ── RIGHT: AI Terminal (only shown when processing/done) ────────── */}
